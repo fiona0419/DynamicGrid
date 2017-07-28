@@ -420,6 +420,12 @@ public class DynamicGridView extends GridView {
         return null;
     }
 
+    private int mFixCount = 0;
+
+    public void setFixCount(int fixCount) {
+        mFixCount = fixCount;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -509,6 +515,8 @@ public class DynamicGridView extends GridView {
     }
 
     private void startDragAtPosition(int position) {
+        if (position <= mFixCount - 1) return;
+
         mTotalOffsetY = 0;
         mTotalOffsetX = 0;
         int itemNum = position - getFirstVisiblePosition();
@@ -698,8 +706,9 @@ public class DynamicGridView extends GridView {
         float vX = 0;
         float vY = 0;
         Point mobileColumnRowPair = getColumnAndRowForView(mMobileView);
-        for (Long id : idList) {
-            View view = getViewForId(id);
+        for (int i = 0; i < idList.size(); i++) {
+            if (i <= mFixCount - 1) continue;
+            View view = getViewForId(idList.get(i));
             if (view != null) {
                 Point targetColumnRowPair = getColumnAndRowForView(view);
                 if ((aboveRight(targetColumnRowPair, mobileColumnRowPair)
